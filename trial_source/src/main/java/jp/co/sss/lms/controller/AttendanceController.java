@@ -41,7 +41,7 @@ public class AttendanceController {
 	 */
 	@RequestMapping(path = "/detail", method = RequestMethod.GET)
 	public String index(Model model) {
-		
+		// 現在日付より前日付で勤怠未入力数を取得
 		Integer courseId = loginUserDto.getCourseId();
 		Integer lmsUserId = loginUserDto.getLmsUserId();
 		try {
