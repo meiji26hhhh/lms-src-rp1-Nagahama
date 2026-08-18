@@ -41,10 +41,25 @@ public class AttendanceController {
 	 */
 	@RequestMapping(path = "/detail", method = RequestMethod.GET)
 	public String index(Model model) {
+		
+		Integer courseId = loginUserDto.getCourseId();
+		Integer lmsUserId = loginUserDto.getLmsUserId();
+		try {
+			Boolean notEnterFlg = studentAttendanceService.notEnterCheck();
+			model.addAttribute("notEnterFlg", notEnterFlg);
+	        model.addAttribute(
+	                "requiredTrainingTimeBulk",
+	                Constants.VALID_KEY_REQUIREDTRAININGTIMEBULK
+	            );
 
+		} catch (ParseException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+		
 		// 勤怠一覧の取得
 		List<AttendanceManagementDto> attendanceManagementDtoList = studentAttendanceService
-				.getAttendanceManagement(loginUserDto.getCourseId(), loginUserDto.getLmsUserId());
+				.getAttendanceManagement(courseId, lmsUserId);
 		model.addAttribute("attendanceManagementDtoList", attendanceManagementDtoList);
 
 		return "attendance/detail";

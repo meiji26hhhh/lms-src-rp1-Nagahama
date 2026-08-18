@@ -31,6 +31,8 @@ import jp.co.sss.lms.util.TrainingTime;
 @Service
 public class StudentAttendanceService {
 
+//	@Autowired
+//	private TrainingTime trainingTime;
 	@Autowired
 	private DateUtil dateUtil;
 	@Autowired
@@ -41,8 +43,23 @@ public class StudentAttendanceService {
 	private LoginUserUtil loginUserUtil;
 	@Autowired
 	private LoginUserDto loginUserDto;
+//	@Autowired
+//	private MLmsUserMapper mLmsUserMapper;
+//	@Autowired
+//	MPlaceMapper mPlaceMapper;
+//	@Autowired
+//	TCompanyAttendanceMapper tCompanyAttendanceMapper;
+//	@Autowired
+//	TUserPlaceMapper tUserPlaceMapper;
 	@Autowired
 	private TStudentAttendanceMapper tStudentAttendanceMapper;
+//	@Autowired
+//	PlaceService placeService;
+	@Autowired
+	CourseService courseService;
+//	@Autowired
+//	CompanyService companyService;
+	
 
 	/**
 	 * 勤怠一覧情報取得
@@ -332,6 +349,27 @@ public class StudentAttendanceService {
 		}
 		// 完了メッセージ
 		return messageUtil.getMessage(Constants.PROP_KEY_ATTENDANCE_UPDATE_NOTICE);
+	}
+	
+	//  現在日付より前日付で勤怠未入力数を取得
+	public Boolean notEnterCheck() throws ParseException {
+		// LMSユーザID
+		Integer  lmsUserId = loginUserDto.getLmsUserId();
+		// 削除フラグ（0）
+		short deleteFlg = 0;
+		// 本日の研修日
+		Date trainingDate = attendanceUtil.getTrainingDate();
+		// 未入力カウント
+		Integer count = 0;
+		
+		// 勤怠情報取得
+		count = tStudentAttendanceMapper.notEnterCount(lmsUserId, deleteFlg, trainingDate);
+//		System.out.println("勤怠未入力数を取得 = " + count);
+		if(count > 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }
