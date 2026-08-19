@@ -73,17 +73,6 @@
 		</div>
 	</div>
 
-	<!-- 現在日付より前日付で勤怠未入力数を取得・表示 
-	<script th:inline="javascript">
-
-    const notEnterFlg = /*[[${notEnterFlg}]]*/ false;
-
-    if (notEnterFlg) {
-        alert("過去日の勤怠に未入力があります。");
-    }
-
-	</script>
--->
 	<script type="text/javascript" th:inline="javascript">
 		$(function() {
 			$("#now").text('現在の時刻は　' + getClock() + '　です。');
