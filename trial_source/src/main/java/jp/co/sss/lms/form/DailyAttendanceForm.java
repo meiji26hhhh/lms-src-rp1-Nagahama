@@ -47,4 +47,16 @@ public class DailyAttendanceForm {
 	/** インデックス */
 	private String index;
 
+	/**
+	 * @author s-nagahama
+	 */
+	/** 出勤Hour */
+	private Integer trainingStartTimeHour;
+	/** 出勤Minute */
+	private Integer trainingStartTimeMinute;
+	/** 退勤Hour */
+	private Integer trainingEndTimeHour;
+	/** 退勤Minute */
+	private Integer trainingEndTimeMinute;
+
 }
