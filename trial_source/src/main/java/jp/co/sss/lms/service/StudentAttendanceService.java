@@ -32,7 +32,7 @@ import jp.co.sss.lms.util.TrainingTime;
 public class StudentAttendanceService {
 
 //	@Autowired
-//	private TrainingTime trainingTime;
+	private TrainingTime trainingTime;
 	@Autowired
 	private DateUtil dateUtil;
 	@Autowired
@@ -222,7 +222,7 @@ public class StudentAttendanceService {
 	}
 
 	/**
-	 * 勤怠フォームへ設定
+	 * Task.26 勤怠フォームへ設定
 	 * 
 	 * @param attendanceManagementDtoList
 	 * @return 勤怠編集フォーム
@@ -315,7 +315,7 @@ public class StudentAttendanceService {
 	}
 
 	/**
-	 * 勤怠登録・更新処理
+	 * Task.26 勤怠登録・更新処理
 	 * 
 	 * @param attendanceForm
 	 * @return 完了メッセージ
@@ -326,6 +326,7 @@ public class StudentAttendanceService {
 		Integer lmsUserId = loginUserUtil.isStudent() ? loginUserDto.getLmsUserId()
 				: attendanceForm.getLmsUserId();
 
+		// 420行あたり formatConversion() メソッド呼び出し
 		 // 時・分をHH:mm形式に変換
 		formatConversion(attendanceForm);
 		
@@ -353,37 +354,29 @@ public class StudentAttendanceService {
 			}
 			tStudentAttendance.setLmsUserId(lmsUserId);
 			tStudentAttendance.setAccountId(loginUserDto.getAccountId());
-			// 出勤時刻整形
-			TrainingTime trainingStartTime = null;
-			// 出勤時間 入力パラメータ．勤怠リスト[n]．出勤時間（時）、出勤時間（分）を hh:mm形式で設定
-			String startTime = dailyAttendanceForm.getTrainingStartTime();
-			if(startTime != null && !startTime.isEmpty()) {
-				trainingStartTime = new TrainingTime(
-					// 前後の空白を除去
-					startTime.trim()
-				);
-			}
+			// 出勤時間整形 入力パラメータ．勤怠リスト[n]．出勤時間（時）、出勤時間（分）を hh:mm形式で設定
+			TrainingTime trainingStartTime =
+				    new TrainingTime(
+				        dailyAttendanceForm.getTrainingStartTime() == null
+				            ? ""
+				            : dailyAttendanceForm.getTrainingStartTime().trim()
+				    );
 			// trainingStartTime 空白 出力確認
 //			System.out.println("■trainingStartTime : [" + trainingStartTime + "]");
-			
 			// tStudentAttendance の setTrainingStartTime notNull判定 ? yes (文字列で日付セット) : no ("" 空白セット)
 			tStudentAttendance.setTrainingStartTime(trainingStartTime != null
 					? trainingStartTime.getFormattedString()
 					: "" );
 			
-			// 退勤時刻整形
-			TrainingTime trainingEndTime = null;
-			// 退勤時間 入力パラメータ．勤怠リスト[n]．出勤時間（時）、出勤時間（分）を hh:mm形式で設定
-			String endTime = dailyAttendanceForm.getTrainingEndTime();
-			if(endTime != null && !endTime.isEmpty()) {
-				trainingEndTime = new TrainingTime(
-						// 前後の空白を除去
-						endTime.trim()
-				);
-			}
+			// 退勤時間整形 入力パラメータ．勤怠リスト[n]．出勤時間（時）、出勤時間（分）を hh:mm形式で設定
+			TrainingTime trainingEndTime =
+				    new TrainingTime(
+				        dailyAttendanceForm.getTrainingEndTime() == null
+				            ? ""
+				            : dailyAttendanceForm.getTrainingEndTime().trim()
+				    );
 			// trainingEndTime 空白 出力確認
 //			System.out.println("■trainingEndTime : [" + trainingEndTime + "]");
-			
 			// tStudentAttendance の setTrainingEndTime notNull判定 ? yes (文字列で日付セット) : no ("" 空白セット)
 			tStudentAttendance.setTrainingEndTime(trainingEndTime != null
 					? trainingEndTime.getFormattedString()
@@ -456,7 +449,12 @@ public class StudentAttendanceService {
 		}
 	}
 	
-	//  Task.25 現在日付より前日付で勤怠未入力数を取得
+	/**
+	 * Task.25 現在日付より前日付で勤怠未入力数を取得
+	 * @author s-nagahama
+	 * @return Boolean ture / false
+	 * @throws ParseException
+	 */
 	public Boolean notEnterCheck() throws ParseException {
 		// LMSユーザID
 		Integer  lmsUserId = loginUserDto.getLmsUserId();
@@ -469,6 +467,7 @@ public class StudentAttendanceService {
 		
 		// 勤怠情報取得
 		count = tStudentAttendanceMapper.notEnterCount(lmsUserId, deleteFlg, trainingDate);
+		// count 出力確認用
 //		System.out.println("勤怠未入力数を取得 = " + count);
 		if(count > 0) {
 			return true;

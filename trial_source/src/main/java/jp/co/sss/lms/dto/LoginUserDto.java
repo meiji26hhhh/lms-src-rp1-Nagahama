@@ -18,6 +18,7 @@ import lombok.Data;
 @Data
 public class LoginUserDto implements Serializable {
 
+	// courseId lmsUserId Dataアノテーションの確認
 	/** シリアルバージョンUID */
 	private static final long serialVersionUID = 1L;
 

@@ -88,16 +88,18 @@ public class AttendanceUtil {
 
 	/**
 	 * 時刻分を丸めた本日日付を取得
-	 * 
+	 * @author s-nagahama
 	 * @return "yyyy/M/d"形式の日付
 	 */
 	public Date getTrainingDate() {
 		Date trainingDate;
 		try {
+			// dateUtil.toString(new Date()) 日時 Date > String 文字列の日付に変換
+			// dateUtil.parse()  文字列の日付 String > Date 日付に変換 ※時間なし
 			trainingDate = dateUtil.parse(dateUtil.toString(new Date()));
 		} catch (ParseException e) {
-			// DateUtil#toStringとparseは同様のフォーマットを使用しているため、起こりえないエラー
-			throw new IllegalStateException();
+			// 例外が発生した場合
+			throw new IllegalStateException(e);
 		}
 		return trainingDate;
 	}
@@ -134,50 +136,48 @@ public class AttendanceUtil {
 	
 	/**
 	 * 0～23、時間を取得
-	 * @return 時間
+	 * @return hourMap ( key, value )
 	 */
 	public LinkedHashMap<Integer, String> getHourMap() {
 		LinkedHashMap<Integer, String> hourMap = new LinkedHashMap<>();
 		hourMap.put(null, "");
 		for (int i = 0; i < 24; i++) {
-			String time;
-			if(i<10) {
-				time = String.valueOf("0" + i);
-			}
-			else {
-				time = String.valueOf(i);
-			}
-			hourMap.put(i, time);
+			// %d= 整数, 2= ２桁, 0= １桁ゼロ
+			hourMap.put(i, String.format("%02d", i));
 		}
 		return hourMap;
 	}
 	
 	/**
 	 * 0～59、分を取得
-	 * @return
+	 * @return minuteMap ( key, value )
 	 */
 	public LinkedHashMap<Integer, String> getMinuteMap() {
 		LinkedHashMap<Integer, String> minuteMap = new LinkedHashMap<>();
 		minuteMap.put(null, "");
 		for (int i = 0; i < 60; i++) {
-			String time;
-			if(i<10) {
-				time = String.valueOf("0" + i);
-			}
-			else {
-				time = String.valueOf(i);
-			}
-			minuteMap.put(i, time);
+			minuteMap.put(i, String.format("%02d", i));
 		}
 		return minuteMap;
 	}
 
+	/**
+	 * 時間を抜き出す
+	 * @param timeHour
+	 * @return "HH:mm" HH 抜き出す
+	 */
 	public String getTimeHour(String timeHour) {
 	    if (timeHour == null || timeHour.isEmpty()) {
 	        return "";
 	    }
 		return timeHour.substring(0, 2);
 	}
+	
+	/**
+	 * 分を抜き出す
+	 * @param timeMinute
+	 * @return "HH:mm" mm 抜き出す
+	 */
 	public String getTimeMinute(String timeMinute) {
 	    if (timeMinute == null || timeMinute.isEmpty()) {
 	        return "";
