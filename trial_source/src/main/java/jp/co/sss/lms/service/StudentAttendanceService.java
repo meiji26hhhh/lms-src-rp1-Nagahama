@@ -274,7 +274,7 @@ public class StudentAttendanceService {
 				dailyAttendanceForm.setTrainingStartTimeMinute(Integer.parseInt(minute));
 			}
 			// 出力確認用print
-//			System.out.println("出勤：" + dateUtil.toString(attendanceManagementDto.getTrainingDate()) + " DtogetTrainingStartTime "+attendanceManagementDto.getTrainingStartTime() + " hour "+ hour + " minute " + minute + " status " + attendanceManagementDto.getStatus());
+			System.out.println("出勤：" + dateUtil.toString(attendanceManagementDto.getTrainingDate()) + " DtogetTrainingStartTime "+attendanceManagementDto.getTrainingStartTime() + " hour "+ hour + " minute " + minute + " status " + attendanceManagementDto.getStatus());
 			// リセット
 			hour = "";
 			minute = "";
@@ -451,6 +451,7 @@ public class StudentAttendanceService {
 	
 	/**
 	 * Task.25 現在日付より前日付で勤怠未入力数を取得
+	 * 
 	 * @author s-nagahama
 	 * @return Boolean ture / false
 	 * @throws ParseException
@@ -459,7 +460,7 @@ public class StudentAttendanceService {
 		// LMSユーザID
 		Integer  lmsUserId = loginUserDto.getLmsUserId();
 		// 削除フラグ（0）
-		short deleteFlg = 0;
+		short deleteFlg = Constants.DB_FLG_FALSE;
 		// 本日の研修日
 		Date trainingDate = attendanceUtil.getTrainingDate();
 		// 未入力カウント

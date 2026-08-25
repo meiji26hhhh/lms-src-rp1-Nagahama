@@ -86,9 +86,10 @@
 			const minutes = ('0' + today.getMinutes()).slice(-2);
 			return hours + ':' + minutes;
 		}
-		/* Task.25 現在日付より前日付で勤怠未入力数を取得・表示
-		　 window DOMContentLoaded = html読み込み, function 実行
-		　 const 変数宣言 値 変更不可(let 可)
+		/* 長濱 Task.25
+			現在日付より前日付で勤怠未入力数を取得・表示
+			window DOMContentLoaded = html読み込み, function 実行
+			const 変数宣言 値 変更不可(let 可)
 		 */
 		window.addEventListener('DOMContentLoaded', function(){
 			const notEnterFlg = /*[[${notEnterFlg}]]*/ false;

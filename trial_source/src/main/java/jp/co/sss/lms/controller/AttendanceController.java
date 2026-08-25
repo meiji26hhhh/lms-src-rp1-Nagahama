@@ -32,7 +32,7 @@ public class AttendanceController {
 
 	/**
 	 * 勤怠管理画面 初期表示
-	 * @author s-nagahama
+	 * 
 	 * @param model
 	 * @param courseId
 	 * @param lmsUserId
@@ -41,23 +41,19 @@ public class AttendanceController {
 	 */
 	// /detail GET アクセス 実行 
 	@RequestMapping(path = "/detail", method = RequestMethod.GET)
-	public String index(Model model) {
+	public String index(Model model) throws ParseException {	// 
 		// 勤怠管理画面用DTOリストのログインユーザー情報を取得
 		Integer courseId = loginUserDto.getCourseId();
 		Integer lmsUserId = loginUserDto.getLmsUserId();
 		
+		// 長濱 Task25
 		// 現在より過去に未入力が無いかチェック
 		// notEnterCheck メソッド 実行
 		// throws ParseException 例外処理 ( Date trainingDate = attendanceUtil.getTrainingDate() )
-		try {
-			Boolean notEnterFlg = studentAttendanceService.notEnterCheck();
-			// notEnterFlg 判定をセット
-			model.addAttribute("notEnterFlg", notEnterFlg);
-			
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		
+		Boolean notEnterFlg = studentAttendanceService.notEnterCheck();
+		// notEnterFlg 判定をセット
+		model.addAttribute("notEnterFlg", notEnterFlg);
+				
 		// ログインユーザー情報使って、ユーザーのコースの勤怠一覧を取得する
 		List<AttendanceManagementDto> attendanceManagementDtoList = studentAttendanceService
 				.getAttendanceManagement(courseId, lmsUserId);

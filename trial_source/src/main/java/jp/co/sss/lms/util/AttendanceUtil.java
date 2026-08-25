@@ -88,7 +88,7 @@ public class AttendanceUtil {
 
 	/**
 	 * 時刻分を丸めた本日日付を取得
-	 * @author s-nagahama
+	 * 
 	 * @return "yyyy/M/d"形式の日付
 	 */
 	public Date getTrainingDate() {

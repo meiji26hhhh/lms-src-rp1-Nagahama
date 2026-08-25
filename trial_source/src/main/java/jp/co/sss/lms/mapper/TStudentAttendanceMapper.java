@@ -68,10 +68,12 @@ public interface TStudentAttendanceMapper {
 	/**
 	 * 現在日付より前日付で勤怠未入力数を取得
 	 * 
-	 * @author s-nagahama
-	 * @param lmsUserId deleteFlg trainingDate
+	 * @author s-nagahama Task25
+	 * @param lmsUserId
+	 * @param deleteFlg
+	 * @param trainingDate
 	 * @return 勤怠未入力数を取得
 	 */
 	Integer notEnterCount(@Param("lmsUserId") Integer lmsUserId,
-			@Param("deleteFlg") Short deleteFlg, @Param("trainingDate") Date trainingDate);
+			@Param("deleteFlg") Short deleteFlg,@Param("trainingDate") Date trainingDate);
 }
