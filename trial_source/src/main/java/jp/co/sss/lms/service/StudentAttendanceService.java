@@ -274,7 +274,7 @@ public class StudentAttendanceService {
 				dailyAttendanceForm.setTrainingStartTimeMinute(Integer.parseInt(minute));
 			}
 			// 出力確認用print
-			System.out.println("出勤：" + dateUtil.toString(attendanceManagementDto.getTrainingDate()) + " DtogetTrainingStartTime "+attendanceManagementDto.getTrainingStartTime() + " hour "+ hour + " minute " + minute + " status " + attendanceManagementDto.getStatus());
+//			System.out.println("出勤：" + dateUtil.toString(attendanceManagementDto.getTrainingDate()) + " DtogetTrainingStartTime "+attendanceManagementDto.getTrainingStartTime() + " hour "+ hour + " minute " + minute + " status " + attendanceManagementDto.getStatus());
 			// リセット
 			hour = "";
 			minute = "";
@@ -304,10 +304,13 @@ public class StudentAttendanceService {
 			dailyAttendanceForm.setNote(attendanceManagementDto.getNote());
 			dailyAttendanceForm.setSectionName(attendanceManagementDto.getSectionName());
 			dailyAttendanceForm.setIsToday(attendanceManagementDto.getIsToday());
+			// test 出力確認用
+//			dailyAttendanceForm.setIsToday(true);
+//			System.out.println("attendanceManagementDto.getIsToday() : " +attendanceManagementDto.getIsToday());
+			
 			dailyAttendanceForm.setDispTrainingDate(dateUtil
 					.dateToString(attendanceManagementDto.getTrainingDate(), "yyyy年M月d日(E)"));
 			dailyAttendanceForm.setStatusDispName(attendanceManagementDto.getStatusDispName());
-
 			attendanceForm.getAttendanceList().add(dailyAttendanceForm);
 		}
 
