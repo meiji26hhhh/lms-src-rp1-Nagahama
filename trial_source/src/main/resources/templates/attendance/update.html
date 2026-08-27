@@ -23,7 +23,7 @@
 
 			<form th:action="@{/attendance/update}" method="post">
 				<table class="table table-hover dataTable no-footer">
-					<thead>
+					<thead style="display: block;">
 						<tr>
 							<th class="w140">日付</th>
 							<th class="w140">コース内容</th>
@@ -36,7 +36,7 @@
 							<th class="w140">備考</th>
 						</tr>
 					</thead>
-					<tbody>
+					<tbody style="display: block; overflow-y: auto; height: 570px">
 						<th:block th:each="dailyAttendanceForm, stat : *{attendanceForm.attendanceList}">
 							<tr th:style="${dailyAttendanceForm.isToday} ? 'background-color: #d9edf7;' : ''">
 								<th:block>
