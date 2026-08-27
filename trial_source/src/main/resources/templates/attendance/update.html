@@ -118,31 +118,30 @@
 		</div>
 	</div>
 	<script type="text/javascript" th:inline="javascript">
-			document.addEventListener("DOMContentLoaded", function () {
-
-				const regularTimeButtons =
-					document.querySelectorAll(".default-button");
-
-				regularTimeButtons.forEach(function (button) {
-
-					button.addEventListener("click", function () {
-
-						// 押下した「定時」ボタンがある行を取得
-						const row = button.closest("tr");
-
-						// 出勤 09:00
-						row.querySelector(".start-time-hour").value = "9";
-						row.querySelector(".start-time-minute").value = "0";
-
-						// 退勤 18:00
-						row.querySelector(".end-time-hour").value = "18";
-						row.querySelector(".end-time-minute").value = "0";
-
-					});
-
-				});
-
+		document.addEventListener("DOMContentLoaded", function () {
+			// .default-button  全ての要素を取得
+			const regularTimeButtons = document.querySelectorAll(".default-button");
+			// 取得した regularTimeButtons の中、全ての button に対して実行
+			regularTimeButtons.forEach(function (button) {
+				// click されたら、 setRegularTime 実行
+				button.addEventListener("click", setRegularTime);
 			});
+
+			// setRegularTime 処理内容
+			function setRegularTime(event) {
+				// tr の祖先要素 日付ごとに targetRow に取得
+				const targetRow = event.currentTarget.closest("tr");
+
+				// 出勤 09:00 を時分ごとに value にセット
+				targetRow.querySelector(".start-time-hour").value = "9";
+				targetRow.querySelector(".start-time-minute").value = "0";
+
+				// 退勤 18:00 を時分ごとに value にセット
+				targetRow.querySelector(".end-time-hour").value = "18";
+				targetRow.querySelector(".end-time-minute").value = "0";
+			}
+
+		});
 	</script>
 </body>
 </html>
