@@ -48,7 +48,7 @@ public class DailyAttendanceForm {
 	private String index;
 
 	/**
-	 * @author s-nagahama
+	 * @author 長濱
 	 */
 	/** 出勤Hour */
 	private Integer trainingStartTimeHour;

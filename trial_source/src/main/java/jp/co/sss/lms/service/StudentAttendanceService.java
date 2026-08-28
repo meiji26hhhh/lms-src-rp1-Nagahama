@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 
 import jp.co.sss.lms.dto.AttendanceManagementDto;
 import jp.co.sss.lms.dto.LoginUserDto;
@@ -418,7 +419,112 @@ public class StudentAttendanceService {
 		return messageUtil.getMessage(Constants.PROP_KEY_ATTENDANCE_UPDATE_NOTICE);
 	}
 	
-	// Task.26 出勤・退勤時間の入力方法変更
+	// 長濱 Task.27 入力チェックの実装
+	public void updateInputCheck(AttendanceForm attendanceForm, BindingResult result) {
+		// カウント用
+		int count = 0;
+		for (DailyAttendanceForm dailyAttendanceForm : attendanceForm.getAttendanceList()) {
+
+			// 文字数チェック　パラメータ "備考" 100
+			if (dailyAttendanceForm.getNote() != null
+					&& dailyAttendanceForm.getNote().length() > 100) {
+				result.rejectValue(
+						"attendanceList[" + count + "].note",
+						"maxlength",
+						new Object[] { "備考", "100" },
+						null);
+			}
+
+			// 出退勤時間 時・分 いずれか未入力のチェック
+			Integer startHour = dailyAttendanceForm.getTrainingStartTimeHour();
+			Integer startMinute = dailyAttendanceForm.getTrainingStartTimeMinute();
+			Integer endHour = dailyAttendanceForm.getTrainingEndTimeHour();
+			Integer endMinute = dailyAttendanceForm.getTrainingEndTimeMinute();
+			// 出勤時
+			if (startHour == null && startMinute != null) {
+				result.rejectValue(
+						"attendanceList[" + count + "].trainingStartTimeHour",
+						"input.invalid",
+						new Object[] { "出勤時間" },
+						null);
+			}
+			// 出勤分
+			if (startHour != null && startMinute == null) {
+				result.rejectValue(
+						"attendanceList[" + count + "].trainingStartTimeMinute",
+						"input.invalid",
+						new Object[] { "出勤時間" },
+						null);
+			}
+			// 退勤時
+			if (endHour == null && endMinute != null) {
+				result.rejectValue(
+						"attendanceList[" + count + "].trainingEndTimeHour",
+						"input.invalid",
+						new Object[] { "退勤時間" },
+						null);
+			}
+			// 退勤分
+			if (endHour != null && endMinute == null) {
+				result.rejectValue(
+						"attendanceList[" + count + "].trainingEndTimeMinute",
+						"input.invalid",
+						new Object[] { "退勤時間" },
+						null);
+			}
+			// 出勤時分なし・退勤時分あり
+			if ((startHour == null && startMinute == null)
+					&& (endHour != null && endMinute != null)) {
+				result.rejectValue(
+						"attendanceList[" + count + "].trainingStartTimeHour",
+						"attendance.punchInEmpty",
+						null,
+						null);
+				result.rejectValue(
+						"attendanceList[" + count + "].trainingStartTimeMinute",
+						"attendance.punchInEmpty",
+						null,
+						null);
+			}
+			// 出勤時間　＞　退勤時間
+			if (startHour != null && startMinute != null && endHour != null && endMinute != null) {
+				int startTime = (startHour * 60) + startMinute;
+				int endTime = (endHour * 60) + endMinute;
+				if (startTime > endTime) {
+					result.rejectValue(
+							"attendanceList[" + count + "].trainingStartTimeHour",
+							"attendance.trainingTimeRange",
+							new Object[] { count },
+							null);
+					result.rejectValue(
+							"attendanceList[" + count + "].trainingStartTimeMinute",
+							"attendance.trainingTimeRange",
+							new Object[] { count },
+							null);
+				}
+			}
+
+			// 中抜け時間
+			Integer blankTime = dailyAttendanceForm.getBlankTime();
+			if (blankTime != null && startHour != null && startMinute != null && endHour != null && endMinute != null) {
+				int startTime = (startHour * 60) + startMinute;
+				int endTime = (endHour * 60) + endMinute;
+				int workTime = endTime - startTime;
+				if (blankTime > workTime) {
+					result.rejectValue(
+							"attendanceList[" + count + "].blankTime",
+							"attendance.blankTimeError",
+							null,
+							null);
+				}
+			}
+
+			// List用カウントアップ
+			count++;
+		}
+	}
+	
+	// 長濱 Task.26 出勤・退勤時間の入力方法変更
 	// サービスクラス設計書 formatConversion() メソッド
 	public void formatConversion(AttendanceForm attendanceForm) {
 		for(DailyAttendanceForm dailyAttendanceForm : attendanceForm.getAttendanceList()) {
@@ -455,7 +561,7 @@ public class StudentAttendanceService {
 	/**
 	 * Task.25 現在日付より前日付で勤怠未入力数を取得
 	 * 
-	 * @author s-nagahama
+	 * @author 長濱
 	 * @return Boolean ture / false
 	 * @throws ParseException
 	 */
@@ -478,6 +584,20 @@ public class StudentAttendanceService {
 		} else {
 			return false;
 		}
+	}
+	
+	/**
+	 * 入力エラー時 再表示用に利用
+	 * 
+	 * @author 長濱
+	 * @param attendanceForm
+	 */
+	public void setSelectMap(AttendanceForm attendanceForm) {
+		attendanceForm.setBlankTimes(attendanceUtil.setBlankTime());
+		attendanceForm.setTrainingStartTimeHour(attendanceUtil.getHourMap());
+		attendanceForm.setTrainingStartTimeMinute(attendanceUtil.getMinuteMap());
+		attendanceForm.setTrainingEndTimeHour(attendanceUtil.getHourMap());
+		attendanceForm.setTrainingEndTimeMinute(attendanceUtil.getMinuteMap());
 	}
 
 }

@@ -21,7 +21,23 @@
 	<div class="row">
 		<div class="bs-component col-sm-12">
 
-			<form th:action="@{/attendance/update}" method="post">
+			<!-- th:object 追加 -->
+			<form th:action="@{/attendance/update}" method="post" th:object="${attendanceForm}">
+				<!-- 未入力チェック -->
+				<div th:if="${#fields.hasErrors('*')}">
+				
+				    <th:block th:each="error : ${#sets.toSet(#fields.errors('*'))}">
+				
+				        <span class="help-inline error"
+				              th:text="${error}">
+				        </span>
+				
+				        <br>
+				
+				    </th:block>
+				
+				</div>
+
 				<table class="table table-hover dataTable no-footer">
 					<thead style="display: block;">
 						<tr>
@@ -37,7 +53,8 @@
 						</tr>
 					</thead>
 					<tbody style="display: block; overflow-y: auto; height: 570px">
-						<th:block th:each="dailyAttendanceForm, stat : *{attendanceForm.attendanceList}">
+						<!-- attendanceForm.attendanceList から修正 -->
+						<th:block th:each="dailyAttendanceForm, stat : *{attendanceList}">
 							<tr th:style="${dailyAttendanceForm.isToday} ? 'background-color: #d9edf7;' : ''">
 								<th:block>
 									<input type="hidden" th:name="|attendanceList[${stat.index}].isToday|" th:value="${dailyAttendanceForm.isToday}" />
@@ -62,12 +79,16 @@
 								 <!-- 出勤 -->
 								<td class="w180">
 									<div style="display: flex;">
-										<select th:name="|attendanceList[${stat.index}].trainingStartTimeHour|" class="form-control start-time-hour">
+										<select th:name="|attendanceList[${stat.index}].trainingStartTimeHour|" 
+										th:classappend="${#fields.hasErrors('attendanceList[' + stat.index + '].trainingStartTimeHour')} ? ' errorInput' : ''" 
+										class="form-control start-time-hour">
 											<option th:each="trainingStartTimeHour : ${attendanceForm.trainingStartTimeHour}" th:value="${trainingStartTimeHour.key}" th:inline="text" class="form-control" 
 												th:selected="${trainingStartTimeHour.key == dailyAttendanceForm.trainingStartTimeHour}">[[${trainingStartTimeHour.value}]]</option>
 										</select>
 										<span style="padding: 8px;">:</span> 
-										<select th:name="|attendanceList[${stat.index}].trainingStartTimeMinute|" class="form-control start-time-minute">
+										<select th:name="|attendanceList[${stat.index}].trainingStartTimeMinute|" 
+										th:classappend="${#fields.hasErrors('attendanceList[' + stat.index + '].trainingStartTimeMinute')} ? ' errorInput' : ''"
+										class="form-control start-time-minute">
 											<option th:each="trainingStartTimeMinute : ${attendanceForm.trainingStartTimeMinute}" th:value="${trainingStartTimeMinute.key}" th:inline="text" class="form-control" 
 												th:selected="${trainingStartTimeMinute.key == dailyAttendanceForm.trainingStartTimeMinute}">[[${trainingStartTimeMinute.value}]]</option>
 										</select>
@@ -77,12 +98,16 @@
 								<!-- 退勤 -->
 								<td class="w180">
 									<div style="display: flex;">
-										<select th:name="|attendanceList[${stat.index}].trainingEndTimeHour|" class="form-control end-time-hour">
+										<select th:name="|attendanceList[${stat.index}].trainingEndTimeHour|" 
+										th:classappend="${#fields.hasErrors('attendanceList[' + stat.index + '].trainingEndTimeHour')} ? ' errorInput' : ''"
+										class="form-control end-time-hour">
 											<option th:each="trainingEndTimeHour : ${attendanceForm.trainingEndTimeHour}" th:value="${trainingEndTimeHour.key}" th:inline="text" class="form-control" 
 												th:selected="${trainingEndTimeHour.key == dailyAttendanceForm.trainingEndTimeHour}">[[${trainingEndTimeHour.value}]]</option>
 										</select>
 										<span style="padding: 8px;">:</span> 
-										<select th:name="|attendanceList[${stat.index}].trainingEndTimeMinute|" class="form-control end-time-minute">
+										<select th:name="|attendanceList[${stat.index}].trainingEndTimeMinute|" 
+										th:classappend="${#fields.hasErrors('attendanceList[' + stat.index + '].trainingEndTimeMinute')} ? ' errorInput' : ''"
+										class="form-control end-time-minute">
 											<option th:each="trainingEndTimeMinute : ${attendanceForm.trainingEndTimeMinute}" th:value="${trainingEndTimeMinute.key}" th:inline="text" class="form-control" 
 												th:selected="${trainingEndTimeMinute.key == dailyAttendanceForm.trainingEndTimeMinute}">[[${trainingEndTimeMinute.value}]]</option>
 										</select>
@@ -97,7 +122,11 @@
 								</td>
 								<td class="w70">[[${dailyAttendanceForm.statusDispName}]]</td>
 								<td class="w140">
-									<input type="text" th:name="|attendanceList[${stat.index}].note|" th:value="${dailyAttendanceForm.note}" class="form-control"></input>
+									<input type="text" th:name="|attendanceList[${stat.index}].note|"
+									th:value="${dailyAttendanceForm.note}" 
+									th:classappend="${#fields.hasErrors('attendanceList[' + stat.index + '].note')} ? 'errorInput' : ''"
+									class="form-control"
+									></input>
 								</td>
 							</tr>
 						</th:block>
@@ -111,13 +140,14 @@
 					<th:block th:if="${session.loginUserDto.role != '0001'}">
 						<input type="submit" value="戻る" name="indexCompany" class="btn btn-default" />
 					</th:block>
-					<input type="submit" value="更新" name="complete" class="btn btn-info" />
+					<input id="updateButton" type="submit" value="更新" name="complete" class="btn btn-info" />
 				</div>
 
 			</form>
 		</div>
 	</div>
 	<script type="text/javascript" th:inline="javascript">
+		// 長濱 Task28
 		document.addEventListener("DOMContentLoaded", function () {
 			// .default-button  全ての要素を取得
 			const regularTimeButtons = document.querySelectorAll(".default-button");
@@ -142,6 +172,21 @@
 			}
 
 		});
+
+		// 長濱 Task27
+		document.addEventListener('DOMContentLoaded', function () {
+			const updateButton = document.getElementById("updateButton");
+			updateButton.addEventListener("click", check);
+
+			function check(event) {
+				const result = confirm("更新します。よろしいですか？");
+				if (!result) {
+					// キャンセルの場合、中断
+					event.preventDefault();
+				}
+			}
+		});
+
 	</script>
 </body>
 </html>
